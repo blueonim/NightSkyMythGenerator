@@ -1,13 +1,14 @@
 private const val MAX_VECTOR = 4
 private const val MAX_DISTANCE = 4
-private const val MAX_PATH_COMPLEXITY = 10
-private const val RING_MULTIPLIER = 2
+private const val MAX_PATH_COMPLEXITY = 13
 private const val MAX_STARS = 13
 private const val MAX_COLOR = 6
 
 class MythGenerator {
 
     private val shortestMap: MutableMap<Set<Constellation>, Int> = mutableMapOf()
+    private val minorMap: MutableMap<Set<Constellation>, Int> = mutableMapOf()
+    private val majorMap: MutableMap<Set<Constellation>, Int> = mutableMapOf()
 
     fun generate() {
         val constellations = setupConstellations()
@@ -19,6 +20,8 @@ class MythGenerator {
                 constellationCount[constellation] = (constellationCount[constellation] ?: 0) + 1
                 print(constellation.name + " ")
             }
+            print(minorMap[myth]?.toString() + " ")
+            print(majorMap[myth]?.toString() + " ")
             println()
         }
         println()
@@ -26,9 +29,28 @@ class MythGenerator {
         println()
 
         constellations.forEach { println(it.name + ": " + constellationCount[it]) }
+        println()
 
         //TODO look for similarities - cut myths that are similar and have one of the high count constellations (cut myth with higher "total" counts)
         //TODO prefer to have more constellation counts of mid ring constellations
+
+        //TODO for each constellation:
+        //TODO determine how many times they should appear - based on what ring they are on
+        //TODO find all myths that contain that constellation
+        //TODO for each of those myths - count up similarities compared to the other myths with that constellation
+        //TODO favor myths that are more unique - and that contain constellations that are less represented
+
+        //TODO proof of concept for getting all myths of a certain type
+        myths.filter { myth -> myth.firstOrNull { constellation -> constellation.name == "Wolf" } != null }
+            .forEach { wolfMyth ->
+            wolfMyth.forEach { wolfConst ->
+                constellationCount[wolfConst] = (constellationCount[wolfConst] ?: 0) + 1
+                print(wolfConst.name + " ")
+            }
+            print(minorMap[wolfMyth]?.toString() + " ")
+            print(majorMap[wolfMyth]?.toString() + " ")
+            println()
+        }
     }
 
     private fun setupConstellations(): Set<Constellation> {
@@ -36,42 +58,42 @@ class MythGenerator {
 
         // Create all constellations and add them to the set
         val wolf = Constellation("Wolf", 1.0, yellow = 1, orange = 1, blue = 1)
-        val cat = Constellation("Cat", 1.0, yellow = 1, orange = 2, blue = 2)
-        val mouse = Constellation("Mouse", 1.5, yellow = 1)
+        val cat = Constellation("Cat", 1.5, yellow = 1, orange = 2, blue = 2)
+        val mouse = Constellation("Mouse", 1.8, yellow = 1)
         val fish = Constellation("Fish", 1.0, yellow = 1, orange = 1, blue = 1)
-        val boat = Constellation("Boat", 1.0, yellow = 1, orange = 2, blue = 1)
-        val anchor = Constellation("Anchor", 1.5, yellow = 1, orange = 1)
+        val boat = Constellation("Boat", 1.5, yellow = 1, orange = 2, blue = 1)
+        val anchor = Constellation("Anchor", 1.8, yellow = 1, orange = 1)
         val arch = Constellation("Arch", 1.0, yellow = 1, orange = 1, blue = 1)
-        val friends = Constellation("Friends", 1.0, yellow = 2, orange = 1, blue = 1)
+        val friends = Constellation("Friends", 1.5, yellow = 2, orange = 1, blue = 1)
         val mountain = Constellation("Mountain", 1.0, yellow = 1, orange = 1, blue = 1)
-        val tree = Constellation("Tree", 1.0, yellow = 1, orange = 1, blue = 2)
-        val nut = Constellation("Nut", 1.5, orange = 1)
-        val basket = Constellation("Basket", 2.0, yellow = 2, blue = 2)
-        val fruit = Constellation("Fruit", 2.5, yellow = 1, blue = 1)
-        val snake = Constellation("Snake", 2.0, yellow = 3, orange = 2)
-        val scales = Constellation("Scales", 2.0, orange = 1, blue = 3)
-        val fountain = Constellation("Fountain", 2.0, yellow = 2, orange = 3)
-        val coin = Constellation("Coin", 2.5, blue = 1)
-        val dancer = Constellation("Dancer", 2.0, yellow = 1, orange = 3)
-        val ladle = Constellation("Ladle", 2.0, yellow = 2, blue = 1)
-        val flower = Constellation("Flower", 2.0, orange = 2, blue = 2)
-        val seed = Constellation("Seed", 2.5, orange = 1, blue = 1)
-        val eye = Constellation("Eye", 2.0, orange = 2, blue = 3)
-        val hedgehog = Constellation("Hedgehog", 2.0, yellow = 3, orange = 1)
-        val leaf = Constellation("Leaf", 2.0, orange = 1, blue = 2)
-        val fire = Constellation("Fire", 3.0, yellow = 1, orange = 3, blue = 2)
-        val spark = Constellation("Spark", 3.5, yellow = 2)
-        val mask = Constellation("Mask", 3.0, yellow = 2, orange = 1, blue = 2)
-        val teapot = Constellation("Teapot", 3.0, yellow = 2, orange = 1, blue = 1)
-        val cup = Constellation("Cup", 3.5, blue = 2)
-        val satchel = Constellation("Satchel", 3.0, yellow = 1, orange = 2)
-        val chair = Constellation("Chair", 3.0, yellow = 2, orange = 2)
-        val musician = Constellation("Musician", 3.0, yellow = 1, orange = 2, blue = 2)
-        val song = Constellation("Song", 3.5, orange = 2)
-        val spider = Constellation("Spider", 3.0, yellow = 2, orange = 2, blue = 2)
-        val bird = Constellation("Bird", 3.0, yellow = 2, orange = 2, blue = 1)
-        val snail = Constellation("Snail", 3.0, yellow = 1, orange = 1, blue = 2)
-        val book = Constellation("Book", 3.0, yellow = 3, blue = 1)
+        val tree = Constellation("Tree", 1.5, yellow = 1, orange = 1, blue = 2)
+        val nut = Constellation("Nut", 1.8, orange = 1)
+        val basket = Constellation("Basket", 2.5, yellow = 2, blue = 2)
+        val fruit = Constellation("Fruit", 2.8, yellow = 1, blue = 1)
+        val snake = Constellation("Snake", 2.5, yellow = 3, orange = 2)
+        val scales = Constellation("Scales", 2.5, orange = 1, blue = 3)
+        val fountain = Constellation("Fountain", 2.5, yellow = 2, orange = 3)
+        val coin = Constellation("Coin", 2.8, blue = 1)
+        val dancer = Constellation("Dancer", 2.5, yellow = 1, orange = 3)
+        val ladle = Constellation("Ladle", 2.5, yellow = 2, blue = 1)
+        val flower = Constellation("Flower", 2.5, orange = 2, blue = 2)
+        val seed = Constellation("Seed", 2.8, orange = 1, blue = 1)
+        val eye = Constellation("Eye", 2.5, orange = 2, blue = 3)
+        val hedgehog = Constellation("Hedgehog", 2.5, yellow = 3, orange = 1)
+        val leaf = Constellation("Leaf", 2.5, orange = 1, blue = 2)
+        val fire = Constellation("Fire", 4.0, yellow = 1, orange = 3, blue = 2)
+        val spark = Constellation("Spark", 4.3, yellow = 2)
+        val mask = Constellation("Mask", 4.0, yellow = 2, orange = 1, blue = 2)
+        val teapot = Constellation("Teapot", 4.0, yellow = 2, orange = 1, blue = 1)
+        val cup = Constellation("Cup", 4.3, blue = 2)
+        val satchel = Constellation("Satchel", 4.0, yellow = 1, orange = 2)
+        val chair = Constellation("Chair", 4.0, yellow = 2, orange = 2)
+        val musician = Constellation("Musician", 4.0, yellow = 1, orange = 2, blue = 2)
+        val song = Constellation("Song", 4.3, orange = 2)
+        val spider = Constellation("Spider", 4.0, yellow = 2, orange = 2, blue = 2)
+        val bird = Constellation("Bird", 4.0, yellow = 2, orange = 2, blue = 1)
+        val snail = Constellation("Snail", 4.0, yellow = 1, orange = 1, blue = 2)
+        val book = Constellation("Book", 4.0, yellow = 3, blue = 1)
 
         // Add all connections to each constellation
         wolf.connections = setOf(fish, arch, mountain, tree, cat, leaf, basket)
@@ -170,9 +192,15 @@ class MythGenerator {
                 var blues = first.blue + second.blue
                 if (blues > MAX_COLOR) return@second
 
-                if ((yellows + oranges + blues) > MAX_STARS) return@second
+                val twoStarCount = yellows + oranges + blues
+                if (twoStarCount > MAX_STARS) return@second
 
                 val two = setOf(first, second)
+
+                val twoRingComplexity = (first.ring + second.ring) / 1.2
+                minorMap[two] = twoRingComplexity.toInt() + (vectorOne / 2)
+                majorMap[two] = twoRingComplexity.toInt() + vectorOne + (twoStarCount / 7)
+
                 myths.add(two)
                 constellations.subtract(two).forEach third@ { third ->
                     val vectorTwo = shortestPath(first, third)
@@ -183,10 +211,10 @@ class MythGenerator {
                     if (vectorThree > MAX_VECTOR) return@third
                     if ((vectorOne + vectorThree) > MAX_DISTANCE) return@third
 
-                    val avgRing = (first.ring + second.ring + third.ring) / 3
+                    val threeRingComplexity = (first.ring + second.ring + third.ring) / 1.5
                     val sortedVectors = listOf(vectorOne, vectorTwo, vectorThree).sorted()
                     val shortestDistance = sortedVectors[0] + sortedVectors[1]
-                    val pathComplexity = (avgRing * RING_MULTIPLIER) + shortestDistance
+                    val pathComplexity = threeRingComplexity + shortestDistance
                     if (pathComplexity > MAX_PATH_COMPLEXITY) return@third
 
                     yellows += third.yellow
@@ -198,9 +226,15 @@ class MythGenerator {
                     blues += third.blue
                     if (blues > MAX_COLOR) return@third
 
-                    if ((yellows + oranges + blues) > MAX_STARS) return@third
+                    val threeCount = yellows + oranges + blues
+                    if (threeCount > MAX_STARS) return@third
 
-                    myths.add(setOf(first, second, third))
+                    val three = setOf(first, second, third)
+
+                    minorMap[three] = threeRingComplexity.toInt() + (shortestDistance / 2)
+                    majorMap[three] = pathComplexity.toInt() + (threeCount / 7)
+
+                    myths.add(three)
                 }
             }
         }
