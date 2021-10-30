@@ -1,3 +1,5 @@
+package model
+
 data class Constellation (
     val name: String,
     val ring: Ring,

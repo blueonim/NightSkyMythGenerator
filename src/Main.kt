@@ -1,3 +1,7 @@
+import calculations.PathComplexity
+import generators.MythPruner
+import model.createConstellations
+
 fun main(){
-    MythGenerator().generate()
+    MythPruner().generateMyths(createConstellations(), PathComplexity())
 }

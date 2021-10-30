@@ -1,4 +1,6 @@
-enum class Ring(val value: Double, val desiredOccurence: Double) {
+package model
+
+enum class Ring(val value: Double, val desiredOccurrence: Double) {
     Starter(1.0, 1.5),
     First(1.5, 2.0),
     FirstSmall(1.8, 0.7),
