@@ -14,12 +14,12 @@ class PathComplexity: PointStrategy {
             val first = list[0]
             val second = list[1]
 
-            val ringComplexity = (first.ring.value + second.ring.value) / 1.2
+            val ringComplexity = (first.ring.value + second.ring.value) / 2.0
             val vector = pathCalculator.shortestPath(first, second)
             val starTotal = starCount(first) + starCount(second)
 
-            minorMap[myth] = ringComplexity.toInt() + (vector / 2)
-            majorMap[myth] = ringComplexity.toInt() + vector + (starTotal / 7)
+            minorMap[myth] = (ringComplexity + (vector / 2.0)).toInt()
+            majorMap[myth] = (ringComplexity + vector + (starTotal / 7.0)).toInt()
 
         } else if (myth.size == 3) {
             val first = list[0]
@@ -29,14 +29,13 @@ class PathComplexity: PointStrategy {
             val vectorOne = pathCalculator.shortestPath(first, second)
             val vectorTwo = pathCalculator.shortestPath(first, third)
             val vectorThree = pathCalculator.shortestPath(second, third)
-            val ringComplexity = (first.ring.value + second.ring.value + third.ring.value) / 1.5
+            val ringComplexity = (first.ring.value + second.ring.value + third.ring.value) / 2.0
             val sortedVectors = listOf(vectorOne, vectorTwo, vectorThree).sorted()
             val shortestDistance = sortedVectors[0] + sortedVectors[1]
-            val pathComplexity = ringComplexity + shortestDistance
             val starTotal = starCount(first) + starCount(second) + starCount(third)
 
-            minorMap[myth] = ringComplexity.toInt() + (shortestDistance / 2)
-            majorMap[myth] = pathComplexity.toInt() + (starTotal / 7)
+            minorMap[myth] = (ringComplexity + (shortestDistance / 2.5)).toInt()
+            majorMap[myth] = (ringComplexity + (shortestDistance / 1.5) + (starTotal / 7.0)).toInt()
         }
     }
 

@@ -40,10 +40,11 @@ class Systematic: GeneratorStrategy {
         constellations.forEach first@ { first ->
             if (usageCount[first] ?: 0 >= first.limit) return@first
 
-            val secondPotentialSorted = first
-                .findAllNearby(constellations, pathCalculator, 3)
+            // Find one that's close to the first
+            val secondPotentialSorted = first.findAllNearby(constellations, pathCalculator, 3)
                 .filter { !usedVectors.getOrPut(first) { mutableSetOf() }.contains(it) }
                 .filter { usageCount[it] ?: 0 < it.limit }
+                .filter { !first.ring.isSmall || !it.ring.isSmall }
                 .sortedBy { usageCount[it] ?: 0 }
             if (secondPotentialSorted.isEmpty()) return@first
 
@@ -53,16 +54,15 @@ class Systematic: GeneratorStrategy {
                 .random()
 
             // Find a third that's close to one of the others
-            val nearFirst = first
-                .findAllNearby(constellations.subtract(setOf(second)), pathCalculator, 2)
-                .filter { !usedVectors.getOrPut(first) { mutableSetOf() }.contains(it) }
-            val nearSecond = second
-                .findAllNearby(constellations.subtract(setOf(first)), pathCalculator, 2)
-                .filter { !usedVectors.getOrPut(first) { mutableSetOf() }.contains(it) }
+            val nearEither = first.findAllNearby(constellations.subtract(setOf(second)), pathCalculator, 2)
+                .plus(second.findAllNearby(constellations.subtract(setOf(first)), pathCalculator, 2))
 
-            val thirdPotentialSorted = nearFirst.plus(nearSecond)
+            val thirdPotentialSorted = nearEither
+                .filter { !usedVectors.getOrPut(first) { mutableSetOf() }.contains(it) }
+                .filter { !usedVectors.getOrPut(second) { mutableSetOf() }.contains(it) }
                 .filter { usageCount[it] ?: 0 < it.limit }
-                .sortedBy { usageCount[it] ?: 0 }
+                .filter { !first.ring.isSmall || !it.ring.isSmall }
+                .sortedBy { usageCount[it] ?: 0 }.toList()
             if (thirdPotentialSorted.isEmpty()) return@first
 
             val thirdLowestUsage = usageCount[thirdPotentialSorted.first()] ?: 0
@@ -82,6 +82,7 @@ class Systematic: GeneratorStrategy {
                 .findAllNearby(constellations, pathCalculator, 3)
                 .filter { !usedVectors.getOrPut(first) { mutableSetOf() }.contains(it) }
                 .filter { usageCount[it] ?: 0 < it.limit }
+                .filter { !first.ring.isSmall || !it.ring.isSmall }
                 .sortedBy { usageCount[it] ?: 0 }
             if (secondPotentialSorted.isEmpty()) return@first
 
@@ -113,10 +114,20 @@ class Systematic: GeneratorStrategy {
         usageCount.forEach { (constellation, count) -> println(constellation.name + " " + count) }
         println()
 
+        val combinationCount = mutableMapOf<Set<Constellation>, Int>()
         usedVectors.forEach { (constellation, used) ->
             used.forEach { second ->
                 println(constellation.name + " " + second.name)
+
+                val combination = setOf(constellation, second)
+                combinationCount[combination] = 1 + (combinationCount[combination] ?: 0)
             }
+        }
+        println()
+
+        combinationCount.forEach { (combination, count) ->
+            combination.forEach { constellation -> print(constellation.name + " ") }
+            println(count)
         }
         println()
     }
