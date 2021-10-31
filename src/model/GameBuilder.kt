@@ -127,6 +127,9 @@ fun createConstellations(): ConstellationOutput {
     allowList.add(setOf(arch, fish))
     allowList.add(setOf(fish, wolf))
 
+    // Favorites
+    allowList.add(setOf(coin, cup))
+
     // Create blocked list
     val blockedList = mutableSetOf<Set<Constellation>>()
     blockedList.add(setOf(wolf, arch))

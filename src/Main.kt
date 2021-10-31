@@ -1,7 +1,9 @@
 import calculations.PathComplexity
-import generators.MythPruner
+import generators.Systematic
 import model.createConstellations
+import output.printMythData
 
 fun main(){
-    MythPruner().generateMyths(createConstellations(), PathComplexity())
+    val pointStrategy = PathComplexity()
+    printMythData(Systematic().generateMyths(createConstellations(), pointStrategy), pointStrategy)
 }
