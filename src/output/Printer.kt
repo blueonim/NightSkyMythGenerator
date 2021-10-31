@@ -69,4 +69,7 @@ fun printMythData(myths: Set<Set<Constellation>>, pointStrategy: PointStrategy) 
         println(it.name + ": " + constellationCount[it])
     }
     println()
+
+    println("Constellations Used: " + constellationCount.keys.size)
+    println()
 }

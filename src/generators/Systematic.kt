@@ -36,12 +36,14 @@ class Systematic: GeneratorStrategy {
         return outputMyths
     }
 
-    //TODO factor in desired occurrence - not as simple as just multiplying
     private fun buildThreeConstellationMyths(constellations: Set<Constellation>, pointStrategy: PointStrategy) {
         constellations.forEach first@ { first ->
+            if (usageCount[first] ?: 0 >= first.limit) return@first
+
             val secondPotentialSorted = first
-                .findAllNearby(constellations, pathCalculator, 4)
+                .findAllNearby(constellations, pathCalculator, 3)
                 .filter { !usedVectors.getOrPut(first) { mutableSetOf() }.contains(it) }
+                .filter { usageCount[it] ?: 0 < it.limit }
                 .sortedBy { usageCount[it] ?: 0 }
             if (secondPotentialSorted.isEmpty()) return@first
 
@@ -59,6 +61,7 @@ class Systematic: GeneratorStrategy {
                 .filter { !usedVectors.getOrPut(first) { mutableSetOf() }.contains(it) }
 
             val thirdPotentialSorted = nearFirst.plus(nearSecond)
+                .filter { usageCount[it] ?: 0 < it.limit }
                 .sortedBy { usageCount[it] ?: 0 }
             if (thirdPotentialSorted.isEmpty()) return@first
 
@@ -73,9 +76,12 @@ class Systematic: GeneratorStrategy {
 
     private fun buildTwoConstellationMyths(constellations: Set<Constellation>, pointStrategy: PointStrategy) {
         constellations.forEach first@ { first ->
+            if (usageCount[first] ?: 0 >= first.limit) return@first
+
             val secondPotentialSorted = first
-                .findAllNearby(constellations, pathCalculator, 4)
+                .findAllNearby(constellations, pathCalculator, 3)
                 .filter { !usedVectors.getOrPut(first) { mutableSetOf() }.contains(it) }
+                .filter { usageCount[it] ?: 0 < it.limit }
                 .sortedBy { usageCount[it] ?: 0 }
             if (secondPotentialSorted.isEmpty()) return@first
 
