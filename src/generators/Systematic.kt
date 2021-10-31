@@ -62,7 +62,7 @@ class Systematic: GeneratorStrategy {
                 .filter { !usedVectors.getOrPut(second) { mutableSetOf() }.contains(it) }
                 .filter { usageCount[it] ?: 0 < it.limit }
                 .filter { !first.ring.isSmall || !it.ring.isSmall }
-                .sortedBy { usageCount[it] ?: 0 }.toList()
+                .sortedBy { usageCount[it] ?: 0 }
             if (thirdPotentialSorted.isEmpty()) return@first
 
             val thirdLowestUsage = usageCount[thirdPotentialSorted.first()] ?: 0
