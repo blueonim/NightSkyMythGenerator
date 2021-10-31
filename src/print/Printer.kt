@@ -1,7 +1,8 @@
-package output
+package print
 
 import calculations.PointStrategy
 import model.Constellation
+import java.io.File
 
 fun printConstellationData(constellations: Set<Constellation>) {
     var yellowCount = 0
@@ -52,7 +53,7 @@ fun printMythData(myths: Set<Set<Constellation>>, pointStrategy: PointStrategy) 
             print(constellation.name + " ")
         }
         print(pointStrategy.getMinor(myth).toString() + " ")
-        print(pointStrategy.getMajor(myth).toString() + " ")
+        print(pointStrategy.getMajor(myth).toString())
         println()
     }
     println()
@@ -72,4 +73,19 @@ fun printMythData(myths: Set<Set<Constellation>>, pointStrategy: PointStrategy) 
 
     println("Constellations Used: " + constellationCount.keys.size)
     println()
+}
+
+fun writeToFile(myths: Set<Set<Constellation>>, pointStrategy: PointStrategy) {
+    File("output/" + System.currentTimeMillis() + ".csv").bufferedWriter().use { out ->
+        myths.forEach { myth ->
+            myth.forEach { constellation ->
+                out.write(constellation.name + ", ")
+            }
+            if (myth.size == 2) out.write(", ")
+
+            out.write(pointStrategy.getMinor(myth).toString() + ", ")
+            out.write(pointStrategy.getMajor(myth).toString())
+            out.newLine()
+        }
+    }
 }

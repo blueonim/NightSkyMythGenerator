@@ -1,9 +1,12 @@
 import calculations.PathComplexity
 import generators.Systematic
 import model.createConstellations
-import output.printMythData
+import print.printMythData
+import print.writeToFile
 
 fun main(){
     val pointStrategy = PathComplexity()
-    printMythData(Systematic().generateMyths(createConstellations(), pointStrategy), pointStrategy)
+    val myths = Systematic().generateMyths(createConstellations(), pointStrategy)
+    printMythData(myths, pointStrategy)
+    writeToFile(myths, pointStrategy)
 }

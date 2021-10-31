@@ -4,7 +4,7 @@ import calculations.PathCalculator
 import calculations.PointStrategy
 import model.Constellation
 import model.ConstellationOutput
-import output.printMythData
+import print.printMythData
 
 private const val MAX_VECTOR = 4
 private const val MAX_DISTANCE = 6
