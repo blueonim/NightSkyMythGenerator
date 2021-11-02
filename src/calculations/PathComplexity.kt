@@ -14,7 +14,7 @@ class PathComplexity: PointStrategy {
             val first = list[0]
             val second = list[1]
 
-            val ringComplexity = (first.ring.value + second.ring.value) / 2.0
+            val ringComplexity = (first.ring.value + second.ring.value) / 2.5
             val vector = pathCalculator.shortestPath(first, second)
             val starTotal = starCount(first) + starCount(second)
 
@@ -29,7 +29,7 @@ class PathComplexity: PointStrategy {
             val vectorOne = pathCalculator.shortestPath(first, second)
             val vectorTwo = pathCalculator.shortestPath(first, third)
             val vectorThree = pathCalculator.shortestPath(second, third)
-            val ringComplexity = (first.ring.value + second.ring.value + third.ring.value) / 2.0
+            val ringComplexity = (first.ring.value + second.ring.value + third.ring.value) / 2.5
             val sortedVectors = listOf(vectorOne, vectorTwo, vectorThree).sorted()
             val shortestDistance = sortedVectors[0] + sortedVectors[1]
             val starTotal = starCount(first) + starCount(second) + starCount(third)
