@@ -6,4 +6,5 @@ interface PointStrategy {
     fun calculatePoints(myth: Set<Constellation>, pathCalculator: PathCalculator)
     fun getMinor(myth: Set<Constellation>): Int
     fun getMajor(myth: Set<Constellation>): Int
+    fun getSinglePoint(myth: Set<Constellation>): Int
 }

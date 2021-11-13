@@ -3,10 +3,10 @@ package model
 fun createConstellations(): ConstellationOutput {
 
     // Create all constellations and add them to the set
-    val wolf = Constellation("Wolf", Ring.Starter, limit = 3, yellow = 1, orange = 1, blue = 1)
+    val wolf = Constellation("Wolf", Ring.Starter, yellow = 1, orange = 1, blue = 1)
     val cat = Constellation("Cat", Ring.First, yellow = 1, orange = 2)
     val mouse = Constellation("Mouse", Ring.FirstSmall, limit = 2, yellow = 1)
-    val fish = Constellation("Fish", Ring.Starter, limit = 3, yellow = 1, orange = 1, blue = 1)
+    val fish = Constellation("Fish", Ring.Starter, yellow = 1, orange = 1, blue = 1)
     val boat = Constellation("Boat", Ring.First, yellow = 1, orange = 2, blue = 1)
     val anchor = Constellation("Anchor", Ring.FirstSmall, limit = 3, yellow = 1, orange = 1)
     val friends = Constellation("Friends", Ring.First, yellow = 2, orange = 1, blue = 1)

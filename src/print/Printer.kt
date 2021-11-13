@@ -52,8 +52,9 @@ fun printMythData(myths: Set<Set<Constellation>>, pointStrategy: PointStrategy) 
             constellationCount[constellation] = (constellationCount[constellation] ?: 0) + 1
             print(constellation.name + " ")
         }
-        print(pointStrategy.getMinor(myth).toString() + " ")
-        print(pointStrategy.getMajor(myth).toString())
+        //print(pointStrategy.getMinor(myth).toString() + " ")
+        //print(pointStrategy.getMajor(myth).toString() + " ")
+        print(pointStrategy.getSinglePoint(myth).toString())
         println()
     }
     println()
@@ -83,8 +84,10 @@ fun writeToFile(myths: Set<Set<Constellation>>, pointStrategy: PointStrategy) {
             }
             if (myth.size == 2) out.write(", ")
 
-            out.write(pointStrategy.getMinor(myth).toString() + ", ")
-            out.write(pointStrategy.getMajor(myth).toString())
+            //out.write(pointStrategy.getMinor(myth).toString() + ", ")
+            //out.write(pointStrategy.getMajor(myth).toString())
+            out.write("0, ")
+            out.write(pointStrategy.getSinglePoint(myth).toString())
             out.newLine()
         }
     }

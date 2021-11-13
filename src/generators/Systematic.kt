@@ -5,6 +5,11 @@ import calculations.PointStrategy
 import model.Constellation
 import model.ConstellationOutput
 
+private const val THREES_MAX_FROM_FIRST = 2
+private const val THREES_MAX_FROM_EITHER = 2
+private const val TWOS_MAX_FROM_FIRST = 4
+private const val THREE_MYTH_CAP = 15
+
 class Systematic: GeneratorStrategy {
 
     private val pathCalculator = PathCalculator()
@@ -29,19 +34,28 @@ class Systematic: GeneratorStrategy {
             }
         }
 
+        // Create initial set of three size myths
         val constellations = constellationOutput.allConstellations
         buildThreeConstellationMyths(constellations, pointStrategy)
-        buildTwoConstellationMyths(constellations, pointStrategy)
+
+        // Make two size myths until we run out of possibilities
+        var mythCount: Int
+        do {
+            mythCount = outputMyths.size
+            buildTwoConstellationMyths(constellations, pointStrategy)
+        } while (outputMyths.size > mythCount)
 
         return outputMyths
     }
 
     private fun buildThreeConstellationMyths(constellations: Set<Constellation>, pointStrategy: PointStrategy) {
+        var count = 0
         constellations.forEach first@ { first ->
+            if (count >= THREE_MYTH_CAP) return
             if (usageCount[first] ?: 0 >= first.limit) return@first
 
             // Find one that's close to the first
-            val secondPotentialSorted = first.findAllNearby(constellations, pathCalculator, 3)
+            val secondPotentialSorted = first.findAllNearby(constellations, pathCalculator, THREES_MAX_FROM_FIRST)
                 .filter { !usedVectors.getOrPut(first) { mutableSetOf() }.contains(it) }
                 .filter { usageCount[it] ?: 0 < it.limit }
                 .filter { !first.ring.isSmall || !it.ring.isSmall }
@@ -54,14 +68,16 @@ class Systematic: GeneratorStrategy {
                 .random()
 
             // Find a third that's close to one of the others
-            val nearEither = first.findAllNearby(constellations.subtract(setOf(second)), pathCalculator, 2)
-                .plus(second.findAllNearby(constellations.subtract(setOf(first)), pathCalculator, 2))
+            val nearEither = first
+                .findAllNearby(constellations.subtract(setOf(second)), pathCalculator, THREES_MAX_FROM_EITHER)
+                .plus(second
+                    .findAllNearby(constellations.subtract(setOf(first)), pathCalculator, THREES_MAX_FROM_EITHER))
 
             val thirdPotentialSorted = nearEither
                 .filter { !usedVectors.getOrPut(first) { mutableSetOf() }.contains(it) }
                 .filter { !usedVectors.getOrPut(second) { mutableSetOf() }.contains(it) }
                 .filter { usageCount[it] ?: 0 < it.limit }
-                .filter { !first.ring.isSmall || !it.ring.isSmall }
+                .filter { !first.ring.isSmall || !second.ring.isSmall || !it.ring.isSmall }
                 .sortedBy { usageCount[it] ?: 0 }
             if (thirdPotentialSorted.isEmpty()) return@first
 
@@ -70,6 +86,7 @@ class Systematic: GeneratorStrategy {
                 .takeWhile { usageCount[it] ?: 0 <= thirdLowestUsage }
                 .random()
 
+            count++
             addMyth(setOf(first, second, third), pointStrategy)
         }
     }
@@ -79,7 +96,7 @@ class Systematic: GeneratorStrategy {
             if (usageCount[first] ?: 0 >= first.limit) return@first
 
             val secondPotentialSorted = first
-                .findAllNearby(constellations, pathCalculator, 3)
+                .findAllNearby(constellations, pathCalculator, TWOS_MAX_FROM_FIRST)
                 .filter { !usedVectors.getOrPut(first) { mutableSetOf() }.contains(it) }
                 .filter { usageCount[it] ?: 0 < it.limit }
                 .filter { !first.ring.isSmall || !it.ring.isSmall }
