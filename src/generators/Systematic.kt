@@ -9,6 +9,8 @@ private const val THREES_MAX_FROM_FIRST = 2
 private const val THREES_MAX_FROM_EITHER = 1
 private const val TWOS_MAX_FROM_FIRST = 4
 private const val THREE_MYTH_CAP = 15
+private const val THREES_MAX_DISTANCE_FROM_STARTER = 6
+private const val TWOS_MAX_DISTANCE_FROM_STARTER = 4
 
 class Systematic: GeneratorStrategy {
 
@@ -34,21 +36,26 @@ class Systematic: GeneratorStrategy {
             }
         }
 
-        // Create initial set of three size myths
         val constellations = constellationOutput.allConstellations
-        buildThreeConstellationMyths(constellations, pointStrategy)
+        val starters = constellationOutput.starters
+
+        // Create initial set of three size myths
+        buildThreeConstellationMyths(constellations, starters, pointStrategy)
 
         // Make two size myths until we run out of possibilities
         var mythCount: Int
         do {
             mythCount = outputMyths.size
-            buildTwoConstellationMyths(constellations, pointStrategy)
+            buildTwoConstellationMyths(constellations, starters, pointStrategy)
         } while (outputMyths.size > mythCount)
 
         return outputMyths
     }
 
-    private fun buildThreeConstellationMyths(constellations: Set<Constellation>, pointStrategy: PointStrategy) {
+    private fun buildThreeConstellationMyths(constellations: Set<Constellation>,
+                                             starters: Set<Constellation>,
+                                             pointStrategy: PointStrategy)
+    {
         var count = 0
         constellations.forEach first@ { first ->
             if (count >= THREE_MYTH_CAP) return
@@ -60,6 +67,7 @@ class Systematic: GeneratorStrategy {
                 .filter { usageCount[it] ?: 0 < it.limit }
                 .filter { isOneOrLessSmall(first, it) }
                 .filter { isOneOrLessOuter(first, it) }
+                .filter { totalDistanceFromStarter(starters, first, it) <= THREES_MAX_DISTANCE_FROM_STARTER }
                 .sortedBy { usageCount[it] ?: 0 }
             if (secondPotentialSorted.isEmpty()) return@first
 
@@ -80,6 +88,7 @@ class Systematic: GeneratorStrategy {
                 .filter { usageCount[it] ?: 0 < it.limit }
                 .filter { isOneOrLessSmall(first, second, it) }
                 .filter { isOneOrLessOuter(first, second, it) }
+                .filter { totalDistanceFromStarter(starters, first, second, it) <= THREES_MAX_DISTANCE_FROM_STARTER }
                 .sortedBy { usageCount[it] ?: 0 }
             if (thirdPotentialSorted.isEmpty()) return@first
 
@@ -93,7 +102,10 @@ class Systematic: GeneratorStrategy {
         }
     }
 
-    private fun buildTwoConstellationMyths(constellations: Set<Constellation>, pointStrategy: PointStrategy) {
+    private fun buildTwoConstellationMyths(constellations: Set<Constellation>,
+                                           starters: Set<Constellation>,
+                                           pointStrategy: PointStrategy)
+    {
         constellations.forEach first@ { first ->
             if (usageCount[first] ?: 0 >= first.limit) return@first
 
@@ -103,6 +115,7 @@ class Systematic: GeneratorStrategy {
                 .filter { usageCount[it] ?: 0 < it.limit }
                 .filter { isOneOrLessSmall(first, it) }
                 .filter { isOneOrLessOuter(first, it) }
+                .filter { totalDistanceFromStarter(starters, first, it) <= TWOS_MAX_DISTANCE_FROM_STARTER }
                 .sortedBy { usageCount[it] ?: 0 }
             if (secondPotentialSorted.isEmpty()) return@first
 
@@ -136,6 +149,10 @@ class Systematic: GeneratorStrategy {
     private fun isOneOrLessOuter(vararg constellations: Constellation): Boolean =
         constellations.count { it.ring.isOuter } <= 1
 
+    private fun totalDistanceFromStarter(starters: Set<Constellation>,
+                                         vararg constellations: Constellation
+    ): Int = constellations.map { it.distanceFromStarter(starters, pathCalculator) }.sum()
+
     private fun printUsageStats() {
         usageCount.forEach { (constellation, count) -> println(constellation.name + " " + count) }
         println()
@@ -164,3 +181,10 @@ fun Constellation.findAllNearby(constellations: Set<Constellation>,
                                 distance: Int
 ): Set<Constellation> = constellations.subtract(setOf(this))
     .filter { pathCalculator.shortestPath(this, it) <= distance }.toSet()
+
+fun Constellation.distanceFromStarter(starters: Set<Constellation>,
+                                      pathCalculator: PathCalculator
+): Int {
+    if (starters.contains(this)) return 0
+    return starters.map { pathCalculator.shortestPath(this, it) }.min() ?: 0
+}

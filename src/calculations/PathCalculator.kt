@@ -6,6 +6,8 @@ class PathCalculator {
     private val shortestMap: MutableMap<Set<Constellation>, Int> = mutableMapOf()
 
     fun shortestPath(first: Constellation, second: Constellation): Int {
+        if (first == second) return 0
+
         val vector = setOf(first, second)
         shortestMap[vector]?.let { return it }
 

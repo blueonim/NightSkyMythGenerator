@@ -9,7 +9,7 @@ fun createConstellations(): ConstellationOutput {
     val fish = Constellation("Fish", Ring.Starter, yellow = 1, orange = 1, blue = 1)
     val boat = Constellation("Boat", Ring.First, yellow = 1, orange = 2, blue = 1)
     val anchor = Constellation("Anchor", Ring.FirstSmall, limit = 3, yellow = 1, orange = 1)
-    val friends = Constellation("Friends", Ring.First, yellow = 2, orange = 1, blue = 1)
+    val friends = Constellation("Friends", Ring.Starter, yellow = 2, orange = 1, blue = 1)
     val tree = Constellation("Tree", Ring.First, yellow = 1, orange = 1, blue = 2)
     val nut = Constellation("Nut", Ring.FirstSmall, limit = 2, orange = 1)
     val basket = Constellation("Basket", Ring.Second, yellow = 2, blue = 2)
@@ -102,11 +102,17 @@ fun createConstellations(): ConstellationOutput {
     constellations.add(snail)
     constellations.add(book)
 
+    // Create starter list
+    val starters = mutableSetOf<Constellation>()
+    starters.add(wolf)
+    starters.add(fish)
+    starters.add(friends)
+
     // Create allow list
     val allowList = mutableSetOf<Set<Constellation>>()
 
     // Create blocked list
     val blockedList = mutableSetOf<Set<Constellation>>()
 
-    return ConstellationOutput(constellations, allowList, blockedList)
+    return ConstellationOutput(constellations, starters, allowList, blockedList)
 }
