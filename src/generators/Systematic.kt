@@ -6,7 +6,7 @@ import model.Constellation
 import model.ConstellationOutput
 
 private const val THREES_MAX_FROM_FIRST = 2
-private const val THREES_MAX_FROM_EITHER = 2
+private const val THREES_MAX_FROM_EITHER = 1
 private const val TWOS_MAX_FROM_FIRST = 4
 private const val THREE_MYTH_CAP = 15
 
@@ -58,7 +58,8 @@ class Systematic: GeneratorStrategy {
             val secondPotentialSorted = first.findAllNearby(constellations, pathCalculator, THREES_MAX_FROM_FIRST)
                 .filter { !usedVectors.getOrPut(first) { mutableSetOf() }.contains(it) }
                 .filter { usageCount[it] ?: 0 < it.limit }
-                .filter { !first.ring.isSmall || !it.ring.isSmall }
+                .filter { isOneOrLessSmall(first, it) }
+                .filter { isOneOrLessOuter(first, it) }
                 .sortedBy { usageCount[it] ?: 0 }
             if (secondPotentialSorted.isEmpty()) return@first
 
@@ -77,7 +78,8 @@ class Systematic: GeneratorStrategy {
                 .filter { !usedVectors.getOrPut(first) { mutableSetOf() }.contains(it) }
                 .filter { !usedVectors.getOrPut(second) { mutableSetOf() }.contains(it) }
                 .filter { usageCount[it] ?: 0 < it.limit }
-                .filter { !first.ring.isSmall || !second.ring.isSmall || !it.ring.isSmall }
+                .filter { isOneOrLessSmall(first, second, it) }
+                .filter { isOneOrLessOuter(first, second, it) }
                 .sortedBy { usageCount[it] ?: 0 }
             if (thirdPotentialSorted.isEmpty()) return@first
 
@@ -99,7 +101,8 @@ class Systematic: GeneratorStrategy {
                 .findAllNearby(constellations, pathCalculator, TWOS_MAX_FROM_FIRST)
                 .filter { !usedVectors.getOrPut(first) { mutableSetOf() }.contains(it) }
                 .filter { usageCount[it] ?: 0 < it.limit }
-                .filter { !first.ring.isSmall || !it.ring.isSmall }
+                .filter { isOneOrLessSmall(first, it) }
+                .filter { isOneOrLessOuter(first, it) }
                 .sortedBy { usageCount[it] ?: 0 }
             if (secondPotentialSorted.isEmpty()) return@first
 
@@ -126,6 +129,12 @@ class Systematic: GeneratorStrategy {
         pointStrategy.calculatePoints(myth, pathCalculator)
         outputMyths.add(myth)
     }
+
+    private fun isOneOrLessSmall(vararg constellations: Constellation): Boolean =
+        constellations.count { it.ring.isSmall } <= 1
+
+    private fun isOneOrLessOuter(vararg constellations: Constellation): Boolean =
+        constellations.count { it.ring.isOuter } <= 1
 
     private fun printUsageStats() {
         usageCount.forEach { (constellation, count) -> println(constellation.name + " " + count) }
