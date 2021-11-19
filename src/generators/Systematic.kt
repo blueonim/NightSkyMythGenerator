@@ -40,7 +40,8 @@ class Systematic: GeneratorStrategy {
         val starters = constellationOutput.starters
 
         // Create initial set of three size myths
-        buildThreeConstellationMyths(constellations, starters, pointStrategy)
+        //TODO disable 3s for now
+        //buildThreeConstellationMyths(constellations, starters, pointStrategy)
 
         // Make two size myths until we run out of possibilities
         var mythCount: Int
