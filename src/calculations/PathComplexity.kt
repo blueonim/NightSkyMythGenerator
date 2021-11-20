@@ -25,8 +25,8 @@ class PathComplexity: PointStrategy {
             //TODO points when having only 2 size myths
             //val singleRingComplexity = (first.ring.value + second.ring.value) / 3.0
             //singlePointMap[myth] = (singleRingComplexity + (vector / 2.8) + (starTotal / 8.0)).toInt()
-            val singleRingComplexity = (first.ring.value + second.ring.value) / 2.5
-            singlePointMap[myth] = (singleRingComplexity + (vector / 2.0) + (starTotal / 6.0)).toInt()
+            val singleRingComplexity = (first.ring.value + second.ring.value) / 3.0
+            singlePointMap[myth] = (singleRingComplexity + (vector / 3.0) + (starTotal / 8.0)).toInt() - 1
 
         } else if (myth.size == 3) {
             val first = list[0]

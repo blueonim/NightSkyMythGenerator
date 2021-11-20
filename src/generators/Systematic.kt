@@ -112,6 +112,7 @@ class Systematic: GeneratorStrategy {
 
             val secondPotentialSorted = first
                 .findAllNearby(constellations, pathCalculator, TWOS_MAX_FROM_FIRST)
+                .filter { !first.findAllNearby(constellations, pathCalculator, 1).contains(it) }
                 .filter { !usedVectors.getOrPut(first) { mutableSetOf() }.contains(it) }
                 .filter { usageCount[it] ?: 0 < it.limit }
                 .filter { isOneOrLessSmall(first, it) }
