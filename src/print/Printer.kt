@@ -46,15 +46,21 @@ fun printConstellationData(constellations: Set<Constellation>) {
 fun printMythData(myths: Set<Set<Constellation>>, pointStrategy: PointStrategy) {
     val constellationCount = mutableMapOf<Constellation, Int>()
     val sizeCount = mutableMapOf<Int, Int>()
+    var yellowCount = 0
+    var orangeCount = 0
+    var blueCount = 0
     myths.forEach { myth ->
         sizeCount[myth.size] = (sizeCount[myth.size] ?: 0) + 1
         myth.forEach { constellation ->
             constellationCount[constellation] = (constellationCount[constellation] ?: 0) + 1
+            yellowCount += constellation.yellow
+            orangeCount += constellation.orange
+            blueCount += constellation.blue
             print(constellation.name + " ")
         }
         //print(pointStrategy.getMinor(myth).toString() + " ")
         //print(pointStrategy.getMajor(myth).toString() + " ")
-        print(pointStrategy.getSinglePoint(myth).toString())
+        //print(pointStrategy.getSinglePoint(myth).toString())
         println()
     }
     println()
@@ -73,6 +79,11 @@ fun printMythData(myths: Set<Set<Constellation>>, pointStrategy: PointStrategy) 
     println()
 
     println("Constellations Used: " + constellationCount.keys.size)
+    println()
+
+    println("Yellow Count: $yellowCount")
+    println("Orange Count: $orangeCount")
+    println("Blue Count: $blueCount")
     println()
 }
 

@@ -21,4 +21,9 @@ class PathCalculator {
         shortestMap[vector] = steps
         return steps
     }
+
+    fun shortestPathToMultiple(single: Constellation, multiple: Set<Constellation>): Int {
+        if (multiple.contains(single)) return 0
+        return multiple.map { shortestPath(single, it) }.min() ?: 0
+    }
 }
