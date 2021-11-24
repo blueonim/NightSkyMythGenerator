@@ -5,6 +5,9 @@ import calculations.PointStrategy
 import model.Constellation
 import model.ConstellationOutput
 
+private const val MAX_MYTHS = 100
+private const val MAX_USAGE = 3
+
 class Equalizer:GeneratorStrategy {
 
     private val pathCalculator = PathCalculator()
@@ -30,31 +33,39 @@ class Equalizer:GeneratorStrategy {
 
     private fun rankMyth(first: Constellation, second: Constellation, starters: Set<Constellation>): RankedMyth {
         val distanceApart = pathCalculator.shortestPath(first, second)
-        val firstToCenter = pathCalculator.shortestPathToMultiple(first, starters)
-        val secondToCenter = pathCalculator.shortestPathToMultiple(second, starters)
+        val firstToCenter = pathCalculator.shortestPathToMultiple(first, starters) + 1
+        val secondToCenter = pathCalculator.shortestPathToMultiple(second, starters) + 1
         val totalToCenter = firstToCenter + secondToCenter
         val totalStars = starCount(first) + starCount(second)
 
-        val rank = distanceApart + (totalToCenter / 2.0) + (totalStars / 6.0)
+        val rank = (distanceApart / 1.2) + (totalToCenter / 1.8) + (totalStars / 7.0)
 
         return RankedMyth(first, second, rank)
     }
 
     private fun chooseMyths(rankedMyths: Set<RankedMyth>): Set<Set<Constellation>> {
-        //TODO testing - sort and print
-        /*rankedMyths.toList().sortedBy { it.rank }.forEach {
-            println(it.first.name + " " + it.second.name + " " + it.rank)
-        }*/
+        var lowIndex = rankedMyths.size / 2
+        var highIndex = lowIndex + 1
+        val ordered = rankedMyths.toList().sortedBy { it.rank }
 
-        //choose middle 50ish
-        val index = (rankedMyths.size / 2) - 25
-        val middleRanks = rankedMyths.toList().sortedBy { it.rank }.subList(index, index + 50)
+        val usage = mutableMapOf<Constellation, Int>()
 
-        //TODO work on optimizing for equal usage of constellations/stars, etc
-        //do "inside-out" selection
-        //add caps for constellation usage?
+        val chosen = mutableSetOf<Set<Constellation>>()
+        while (chosen.size < MAX_MYTHS && lowIndex >=0 && highIndex < ordered.size) {
+            setOf(ordered.elementAtOrNull(lowIndex), ordered.elementAtOrNull(highIndex))
+                .filterNotNull()
+                .filter { usage[it.first] ?: 0 < MAX_USAGE }
+                .filter { usage[it.second] ?: 0 < MAX_USAGE }
+                .forEach {
+                    usage[it.first] = 1 + (usage[it.first] ?: 0)
+                    usage[it.second] = 1 + (usage[it.second] ?: 0)
+                    chosen.add(setOf(it.first, it.second))
+            }
+            lowIndex --
+            highIndex ++
+        }
 
-        return middleRanks.map { setOf(it.first, it.second) }.toSet()
+        return chosen
     }
 
     private fun starCount(constellation: Constellation): Int {
