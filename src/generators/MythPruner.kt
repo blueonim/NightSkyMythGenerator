@@ -67,7 +67,7 @@ class MythPruner: GeneratorStrategy {
                     if (twoStarCount > MAX_STARS) return@second
                 }
 
-                pointStrategy.calculatePoints(two, pathCalculator)
+                pointStrategy.calculatePoints(two, constellationOutput.starters, pathCalculator)
 
                 if (!constellationOutput.blockedList.contains(two)) myths.add(two)
 
@@ -98,7 +98,7 @@ class MythPruner: GeneratorStrategy {
                         if (threeCount > MAX_STARS) return@third
                     }
 
-                    pointStrategy.calculatePoints(three, pathCalculator)
+                    pointStrategy.calculatePoints(three, constellationOutput.starters, pathCalculator)
 
                     if (!constellationOutput.blockedList.contains(three)) myths.add(three)
                 }

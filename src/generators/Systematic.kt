@@ -7,7 +7,7 @@ import model.ConstellationOutput
 
 private const val THREES_MAX_FROM_FIRST = 2
 private const val THREES_MAX_FROM_EITHER = 1
-private const val TWOS_MAX_FROM_FIRST = 4
+private const val TWOS_MAX_FROM_FIRST = 3
 private const val THREE_MYTH_CAP = 15
 private const val THREES_MAX_DISTANCE_FROM_STARTER = 6
 private const val TWOS_MAX_DISTANCE_FROM_STARTER = 4
@@ -25,7 +25,7 @@ class Systematic: GeneratorStrategy {
     ): Set<Set<Constellation>> {
 
         // Add the allow list
-        constellationOutput.allowList.forEach { addMyth(it, pointStrategy) }
+        constellationOutput.allowList.forEach { addMyth(it, constellationOutput.starters, pointStrategy) }
 
         // Add blocked list to used vectors
         constellationOutput.blockedList.forEach { blocked ->
@@ -99,7 +99,7 @@ class Systematic: GeneratorStrategy {
                 .random()
 
             count++
-            addMyth(setOf(first, second, third), pointStrategy)
+            addMyth(setOf(first, second, third), starters, pointStrategy)
         }
     }
 
@@ -126,11 +126,11 @@ class Systematic: GeneratorStrategy {
                 .takeWhile { usageCount[it] ?: 0 <= secondLowestUsage }
                 .random()
 
-            addMyth(setOf(first, second), pointStrategy)
+            addMyth(setOf(first, second), starters, pointStrategy)
         }
     }
 
-    private fun addMyth(myth: Set<Constellation>, pointStrategy: PointStrategy) {
+    private fun addMyth(myth: Set<Constellation>, starters: Set<Constellation>, pointStrategy: PointStrategy) {
         if (myth.size != 2 && myth.size != 3) return
         if (outputMyths.contains(myth)) return
 
@@ -141,7 +141,7 @@ class Systematic: GeneratorStrategy {
             }
         }
 
-        pointStrategy.calculatePoints(myth, pathCalculator)
+        pointStrategy.calculatePoints(myth, starters, pathCalculator)
         outputMyths.add(myth)
     }
 

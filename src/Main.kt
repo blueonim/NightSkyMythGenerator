@@ -1,5 +1,5 @@
-import calculations.EqualPoints
-import generators.Equalizer
+import calculations.AssignedPoint
+import generators.SystematicRanked
 import model.createConstellations
 import print.printConstellationData
 import print.printMythData
@@ -9,8 +9,8 @@ fun main(){
     val constellationOutput = createConstellations()
     printConstellationData(constellationOutput.allConstellations)
 
-    val pointStrategy = EqualPoints()
-    val myths = Equalizer().generateMyths(constellationOutput, pointStrategy)
+    val pointStrategy = AssignedPoint()
+    val myths = SystematicRanked().generateMyths(constellationOutput, pointStrategy)
     printMythData(myths, pointStrategy)
     writeToFile(myths, pointStrategy)
 }

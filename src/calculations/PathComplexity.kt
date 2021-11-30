@@ -7,7 +7,9 @@ class PathComplexity: PointStrategy {
     private val majorMap: MutableMap<Set<Constellation>, Int> = mutableMapOf()
     private val singlePointMap: MutableMap<Set<Constellation>, Int> = mutableMapOf()
 
-    override fun calculatePoints(myth: Set<Constellation>, pathCalculator: PathCalculator) {
+    override fun calculatePoints(myth: Set<Constellation>,
+                                 starters: Set<Constellation>,
+                                 pathCalculator: PathCalculator) {
         if (minorMap[myth] != null && majorMap[myth] != null) return
 
         val list = myth.toList()
@@ -47,6 +49,10 @@ class PathComplexity: PointStrategy {
             val singleRingComplexity = (first.ring.value + second.ring.value + third.ring.value) / 2.8
             singlePointMap[myth] = (singleRingComplexity + (shortestDistance / 2.8) + (starTotal / 7.0)).toInt()
         }
+    }
+
+    override fun setSinglePoint(myth: Set<Constellation>, value: Int) {
+        singlePointMap[myth] = value
     }
 
     override fun getMinor(myth: Set<Constellation>): Int {
