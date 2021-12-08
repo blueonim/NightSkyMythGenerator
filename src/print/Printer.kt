@@ -60,7 +60,7 @@ fun printMythData(myths: Set<Set<Constellation>>, pointStrategy: PointStrategy) 
         }
         //print(pointStrategy.getMinor(myth).toString() + " ")
         //print(pointStrategy.getMajor(myth).toString() + " ")
-        print(pointStrategy.getSinglePoint(myth).toString())
+        //print(pointStrategy.getSinglePoint(myth).toString())
         println()
     }
     println()
